@@ -4,9 +4,9 @@ from torch.utils.data import DataLoader,Dataset
 
 class MNISTDataset(Dataset):
 
-    def __init__(self,data,label,flatten=True):
+    def __init__(self,data,labels,flatten=True):
         self.data=data
-        self.label=label
+        self.labels=labels
         self.flatten=flatten
 
         super().__init__()
@@ -18,7 +18,7 @@ class MNISTDataset(Dataset):
     
     def __getitem__(self,idx):
         x = self.data[idx]
-        y = self.label[label]
+        y = self.labels[idx]
 
         if self.flatten==True:
             x = x.reshape(-1)
@@ -58,7 +58,7 @@ def get_loaders(config):
     train_y,valid_y = torch.index_select(y,dim=0,index=indices).split([train_cnt,valid_cnt],dim=0)
 
     train_loader = DataLoader(
-        dataset = MNISTDataset(train_x,valid_x,flatten=flatten),
+        dataset = MNISTDataset(train_x,train_y,flatten=flatten),
         batch_size = config.batch_size,
         shuffle= True
     )

@@ -58,7 +58,7 @@ def main(config):
     print('Valid:',len(valid_loader.dataset))
     print('Test:',len(test_loader.dataset))
 
-    model = get_model(config)
+    model = get_model(config).to(device)
     optimizer = optim.Adam(model.parameters())
     crit = nn.NLLLoss()
 

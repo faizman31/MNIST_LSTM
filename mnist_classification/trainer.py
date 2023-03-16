@@ -62,7 +62,7 @@ class MyEngine(Engine):
                 norm_type=2,
             )
 
-        engine.model.optimizer.step()
+        engine.optimizer.step()
 
         return {
             'loss' : float(loss),
@@ -82,7 +82,7 @@ class MyEngine(Engine):
 
             y_hat = engine.model(x)
 
-            loss = engine.crit(y,y_hat)
+            loss = engine.crit(y_hat,y)
 
             if isinstance(y,torch.LongTensor) or isinstance(y,torch.cuda.LongTensor):
                 accuracy = (torch.argmax(y_hat,dim=-1)==y).sum() / float(y.shape[0])
@@ -96,7 +96,7 @@ class MyEngine(Engine):
 
     
     @staticmethod
-    def attach(train_engine,validation_engine,train_loader,valid_loader,verbose=VERBOSE_BATCH_WISE):
+    def attach(train_engine,validation_engine,verbose=VERBOSE_BATCH_WISE):
         def attach_running_average(engine,metric_name):
             RunningAverage(output_transform=lambda x: x[metric_name]).attach(
                 engine,
@@ -181,7 +181,7 @@ class Trainer():
 
         MyEngine.attach(
             train_engine,
-            valid_engin,
+            valid_engine,
             verbose = self.config.verbose
         )
 
@@ -191,7 +191,7 @@ class Trainer():
         train_engine.add_event_handler(
             Events.EPOCH_COMPLETED,
             run_validation,
-            validation_engine,valid_loader
+            valid_engine,valid_loader
         )
 
         valid_engine.add_event_handler(
